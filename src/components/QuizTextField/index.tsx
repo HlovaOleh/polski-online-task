@@ -20,8 +20,6 @@ const QuizTextFieldView = (props: Props) => {
         }
     }
 
-    console.log(answer)
-
     const checkMistake = () => {
         if (value !== answer) {
             setMistakeCount(prevState => prevState + 1)

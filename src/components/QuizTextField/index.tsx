@@ -1,4 +1,4 @@
-import {KeyboardEvent, useEffect, useRef, useState} from 'react'
+import {ChangeEvent, KeyboardEvent, useEffect, useRef, useState} from 'react'
 import {Input} from './styles'
 import ThreeDotsIndicator from '../ThreeDotsIndicator'
 import {Box} from '@mui/material'
@@ -12,11 +12,30 @@ const QuizTextFieldView = (props: Props) => {
     const [value, setValue] = useState<string>('')
     const [isSuccess, setIsSuccess] = useState<boolean>(false)
     const [mistakeCount, setMistakeCount] = useState<number>(0)
+    const [width, setWidth] = useState<number>(5)
     const inputRef = useRef<HTMLInputElement>(null)
+
+    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const newLength = e.target.value.length
+        if (newLength > width) {
+            setWidth(newLength)
+        }
+    }
 
     const handleOnEnter = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             setValue(e.currentTarget.value)
+        }
+    }
+
+    const handleOnDelete = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Backspace' || e.key === 'Delete') {
+            const newLength = e.currentTarget.value.length
+            if (newLength === 0) {
+                setWidth(5)
+            } else if (newLength > 5) {
+                setWidth(newLength)
+            }
         }
     }
 
@@ -46,9 +65,12 @@ const QuizTextFieldView = (props: Props) => {
             <Input
                 type="text"
                 ref={inputRef}
+                onChange={handleOnChange}
                 onKeyPress={handleOnEnter}
+                onKeyUp={handleOnDelete}
                 disabled={isSuccess}
                 borderColor={isSuccess ? 'green' : 'grey'}
+                width={`${width}ch`}
             />
             <ThreeDotsIndicator isSuccess={isSuccess} mistakeCount={mistakeCount} />
         </Box>
